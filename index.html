@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Portfolio</title>
+    <link href="alati/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&amp;family=Karla&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="alati/lightbox/css/lightbox.min.css" />
+    <script src="alati/lightbox/js/lightbox-plus-jquery.min.js"></script>
+    <script>
+      popupHidden = true;
+
+      function triggerPopup() {
+        let popup = document.getElementById("popup");
+
+        if (popup.style.display === "none") {
+          popup.style.display = "block";
+        } else {
+          popup.style.display = "none";
+        }
+      }
+
+      function hidePopup() {
+        let popup = document.getElementById("popup");
+
+        popup.style.display = "none";
+      }
+
+      class LightBoxVideo {
+        constructor() {
+          this.videos = {};
+          this.lightBoxVideo();
+        }
+
+        lightBoxVideo = () => {
+          this.setEvents();
+          this.setMutationObserver();
+        };
+
+        setMutationObserver = () => {
+          const observer = new MutationObserver((mutation) => {
+            const imageMutations = mutation.filter((m) => {
+              return (
+                m.attributeName === "src" && m.target.className === "lb-image"
+              );
+            });
+
+            const overlayDisplay = window.getComputedStyle(
+              document.querySelector(".lightboxOverlay"),
+              null
+            ).display;
+            if ("none" === overlayDisplay) {
+              this.removeVideoElement();
+            }
+
+            if (imageMutations.length > 0) {
+              if (this.videos[imageMutations[0].target.src]) {
+                this.removeVideoElement();
+                this.setVideoElement(this.videos[imageMutations[0].target.src]);
+              }
+            }
+          });
+
+          observer.observe(document.body, {
+            childList: false,
+            attributes: true,
+            subtree: true,
+            characterData: false,
+          });
+        };
+
+        setEvents = () => {
+          const videoLinks = this.findVideoLinks();
+          videoLinks.forEach((link) => {
+            this.videos[link.href] = link;
+            link.addEventListener("click", (e) => {
+              this.removeVideoElement();
+              this.setVideoElement(e.target);
+            });
+          });
+        };
+
+        setVideoElement = (element) => {
+          const lightbox = document.querySelector(".lightbox");
+          const container = lightbox.querySelector(".lb-container");
+
+          const videoElement = this.createVideoElement(element);
+          container.prepend(videoElement);
+        };
+
+        removeVideoElement = () => {
+          const lightbox = document.querySelector(".lightbox");
+          const container = lightbox.querySelector(".lb-container");
+          const video = container.querySelector("video");
+
+          if (video) {
+            container.removeChild(video);
+          }
+        };
+
+        createVideoElement = (element) => {
+          const video = document.createElement("video");
+
+          video.setAttribute("poster", element.href);
+          video.setAttribute("controls", "true");
+
+          const source = document.createElement("source");
+          source.setAttribute("src", element.dataset.href);
+          source.setAttribute("type", "video/mp4");
+
+          video.append(source);
+
+          return video;
+        };
+
+        findVideoLinks = () => {
+          const hrefs = document.querySelectorAll("a[data-lightbox]");
+          let regex = /\.(mp4|mov|flv|wmv)$/;
+          if (0 === hrefs.length) {
+            return [];
+          }
+          return Array.from(hrefs).filter((href) => {
+            return !!href?.dataset?.href?.match(regex);
+          });
+        };
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        new LightBoxVideo();
+      });
+    </script>
+  </head>
+  <body>
+    <!-- Slide Home -->
+    <div class="home d-flex flex-column" id="home">
+      <div style="position: relative">
+        <!-- Burger -->
+        <div
+          style="position: absolute; top: 90px; right: 113px; cursor: pointer"
+          onclick="triggerPopup()"
+        >
+          <div
+            style="
+              border-radius: 16px;
+              width: 54px;
+              height: 8px;
+              background: #88857f;
+            "
+          ></div>
+          <div
+            style="
+              margin-top: 3px;
+              border-radius: 16px;
+              width: 54px;
+              height: 8px;
+              background: #88857f;
+            "
+          ></div>
+          <div
+            style="
+              margin-top: 3px;
+              border-radius: 16px;
+              width: 54px;
+              height: 8px;
+              background: #88857f;
+            "
+          ></div>
+        </div>
+        <!-- Popup menu -->
+        <div
+          style="
+            position: absolute;
+            right: 154px;
+            top: 157px;
+            background: #6d675c;
+            font-family: 'Julius Sans One', sans-serif;
+            border-radius: 27px;
+            letter-spacing: 0.22em;
+            font-size: 20px;
+            display: none;
+          "
+          id="popup"
+        >
+          <a
+            style="
+              margin-left: 32px;
+              margin-right: 32px;
+              margin-top: 32px;
+              display: block;
+              cursor: pointer;
+              text-align: center;
+            "
+            href="#galerija"
+            onclick="hidePopup()"
+            >GALERIJA</a
+          >
+          <a
+            style="
+              margin-left: 32px;
+              margin-right: 32px;
+              margin-top: 32px;
+              display: block;
+              cursor: pointer;
+              text-align: center;
+            "
+            onclick="hidePopup()"
+            href="#3"
+            >O MENI</a
+          >
+          <a
+            style="
+              margin-left: 32px;
+              margin-right: 32px;
+              margin-top: 32px;
+              margin-bottom: 32px;
+              display: block;
+              cursor: pointer;
+              text-align: center;
+            "
+            onclick="hidePopup()"
+            href="#5"
+            >KONTAKT</a
+          >
+        </div>
+      </div>
+      <div class="container mt-auto mb-auto">
+        <div class="row">
+          <div class="col">
+            <h1 class="hero-title">LANA TETEC | PORTFOLIO</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Slide Izdvojeni radovi -->
+    <div class="slide galerija d-flex flex-column" id="galerija">
+      <div class="container">
+        <div class="row">
+          <div class="col d-flex justify-content-end align-items-center"></div>
+        </div>
+      </div>
+      <div class="container mt-auto mb-auto">
+        <div class="row">
+          <div class="col content">
+            <div class="row">
+              <h1 class="mb-5 title" style="color: #000000">GALERIJA</h1>
+              <div class="col-sm-6 col-lg-4 grid-v-space mb-5">
+                <a href="img/rum.png" data-lightbox="logo" data-title="LOGO">
+                  <div class="sticky">
+                    <h2 class="sticky">LOGO</h2>
+                  </div></a
+                >
+                <a
+                  href="img/mrburger.png"
+                  style="display: none"
+                  data-lightbox="logo"
+                  data-title="LOGO"
+                ></a>
+                <a
+                  href="img/rasinja.png"
+                  style="display: none"
+                  data-lightbox="logo"
+                  data-title="LOGO"
+                ></a>
+                <a
+                  href="img/taurus.png"
+                  style="display: none"
+                  data-lightbox="logo"
+                  data-title="LOGO"
+                ></a>
+                <a
+                  href="img/lana.png"
+                  style="display: none"
+                  data-lightbox="logo"
+                  data-title="LOGO"
+                ></a>
+                <a
+                  href="img/svelec.png"
+                  style="display: none"
+                  data-lightbox="logo"
+                  data-title="LOGO"
+                ></a>
+              </div>
+              <div class="col-sm-6 col-lg-4 grid-v-space">
+                <a
+                  href="img/foto1.png"
+                  data-lightbox="foto"
+                  data-title="FOTOGRAFIJA"
+                >
+                  <div class="sticky">
+                    <h2 class="sticky">FOTOGRAFIJA</h2>
+                  </div></a
+                >
+                <a
+                  href="img/foto2.png"
+                  style="display: none"
+                  data-lightbox="foto"
+                  data-title="FOTOGRAFIJA"
+                ></a>
+                <a
+                  href="img/foto3.png"
+                  style="display: none"
+                  data-lightbox="foto"
+                  data-title="FOTOGRAFIJA"
+                ></a>
+                <a
+                  href="img/foto4.png"
+                  style="display: none"
+                  data-lightbox="foto"
+                  data-title="FOTOGARFIJA"
+                ></a>
+                <a
+                  href="img/foto5.png"
+                  style="display: none"
+                  data-lightbox="foto"
+                  data-title="FOTOGRAFIJA"
+                ></a>
+                <a
+                  href="img/foto6.png"
+                  style="display: none"
+                  data-lightbox="foto"
+                  data-title="FOTOGRAFIJA"
+                ></a>
+                <a
+                  href="img/foto7.png"
+                  style="display: none"
+                  data-lightbox="foto"
+                  data-title="FOTOGRAFIJA"
+                ></a>
+                <a
+                  href="img/foto8.png"
+                  style="display: none"
+                  data-lightbox="foto"
+                  data-title="FOTOGRAFIJA"
+                ></a>
+              </div>
+              <div class="col-sm-6 col-lg-4 grid-v-space">
+                <!-- <a
+                  href="img/image.jpg"
+                  data-lightbox="izdvojeni-radovi"
+                  data-title="VIDEO"
+                > -->
+                <a
+                  href="img/stari.png"
+                  data-href="video/vatrogasac_comp.mp4"
+                  data-lightbox="video"
+                  data-title="VIDEO"
+                >
+                  <div class="sticky">
+                    <h2 class="sticky">VIDEO</h2>
+                  </div></a
+                >
+              </div>
+              <div class="col-sm-6 col-lg-4 grid-v-space">
+                <a
+                  href="img/plakat1.png"
+                  data-lightbox="plakat"
+                  data-title="PLAKAT"
+                >
+                  <div class="sticky">
+                    <h2 class="sticky">PLAKAT</h2>
+                  </div></a
+                >
+                <a
+                  href="img/plakat2.png"
+                  style="display: none"
+                  data-lightbox="plakat"
+                  data-title="PLAKAT"
+                ></a>
+                <a
+                  href="img/plakat3.png"
+                  style="display: none"
+                  data-lightbox="plakat"
+                  data-title="PLAKAT"
+                ></a>
+              </div>
+              <div class="col-sm-6 col-lg-4 grid-v-space">
+                <a
+                  href="img/promo1.png"
+                  data-lightbox="promo"
+                  data-title="PROMO MATERIJAL"
+                >
+                  <div class="sticky">
+                    <h2 class="sticky">PROMO MATERIJAL</h2>
+                  </div></a
+                >
+                <a
+                  href="img/promo2.png"
+                  style="display: none"
+                  data-lightbox="promo"
+                  data-title="PROMO MATERIJAL"
+                ></a>
+                <a
+                  href="img/promo3.png"
+                  style="display: none"
+                  data-lightbox="promo"
+                  data-title="PROMO MATERIJAL"
+                ></a>
+                <a
+                  href="img/promo4.png"
+                  style="display: none"
+                  data-lightbox="promo"
+                  data-title="PROMO MATERIJAL"
+                ></a>
+              </div>
+              <div class="col-sm-6 col-lg-4 grid-v-space">
+                <a
+                  href="img/borsura1.png"
+                  data-lightbox="brosura"
+                  data-title="BROŠURA"
+                >
+                  <div class="sticky">
+                    <h2 class="sticky">BROŠURA</h2>
+                  </div></a
+                >
+                <a
+                  href="img/brosura2.png"
+                  style="display: none"
+                  data-lightbox="brosura"
+                  data-title="BROŠURA"
+                ></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Slide O meni -->
+    <div
+      class="slide o-meni d-flex flex-column"
+      style="align-items: center; overflow-y: scroll; position: relative"
+      id="3"
+    >
+      <img
+        style="z-index: 0; opacity: 0.25; position: absolute"
+        src="img/pozadina.jpeg"
+      />
+      <div
+        class="d-flex flex-column mt-5"
+        style="position: sticky; align-items: center; top: 0"
+      >
+        <div
+          style="
+            z-index: 1;
+            position: absolute;
+            border-radius: 50%;
+            top: -75px;
+            width: 55%;
+            height: 140%;
+            box-shadow: 0px 0px 0px 400px #c0bcb5;
+          "
+        ></div>
+        <h1
+          class="mb-5 title"
+          style="color: #000000; z-index: 1; margin-top: 150px"
+        >
+          O MENI
+        </h1>
+        <div class="o-meni-text" style="width: 33%; z-index: 1">
+          Zovem se Lana Tetec, dolazim iz Subotice Podravske te sam studentica
+          treće godine Multimedije, primjene i oblikovanja na Sveučilištu
+          Sjever. U slobodno vrijeme bavim se grafičkim dizajnom i izradom video
+          materijala. Komunikativna sam osoba te volim raditi u timu. Svaki novi
+          zadatak je za mene izazov kojemu se u postpunosti predam.
+        </div>
+      </div>
+    </div>
+    <!-- Slide Kontakt -->
+    <div class="slide kontakt d-flex flex-column" id="5">
+      <div class="container kontakt mt-auto mb-auto">
+        <div class="row">
+          <div
+            class="col content d-flex flex-column"
+            style="align-items: center"
+          >
+            <h1 class="mb-5 title" style="color: #000000">KONTAKT</h1>
+            <div class="col-lg-6">
+              <form
+                action=""
+                method="post"
+                class="d-flex flex-column"
+                style="align-items: center"
+              >
+                <input
+                  type="text"
+                  name="ime"
+                  placeholder="IME"
+                  class="form-control mb-5"
+                />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="E-MAIL"
+                  class="form-control mb-5"
+                />
+                <textarea
+                  name="poruka"
+                  placeholder="PORUKA"
+                  class="form-control mb-5"
+                  rows="1"
+                ></textarea>
+                <button class="mt-5 mb-5 btn btn-primary" style="width: 156px">
+                  POŠALJI
+                </button>
+              </form>
+            </div>
+            <div
+              class="mt-5 d-flex"
+              style="justify-content: space-evenly; width: 50%"
+            >
+              <a href="https://www.facebook.com/lana.tetec"
+                ><img src="img/fb.png"
+              /></a>
+              <a href="https://www.linkedin.com/in/lana-tetec"
+                ><img src="img/lin.png"
+              /></a>
+              <a href="https://www.instagram.com/lanatetec/"
+                ><img src="img/ig.png"
+              /></a>
+              <a href="#home" style="position: absolute; right: 124px">
+                <img src="img/arrow.png" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigacija -->
+    <script>
+      $(".fa-bars").click(function () {
+        $(".navigacija").css("left", "0");
+      });
+
+      $(".fa-xmark, .navigacija ul a").click(function () {
+        $(".navigacija").css("left", "-100%");
+      });
+    </script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script>
+      const sr = ScrollReveal({
+        distance: "200px",
+        duration: 2500,
+        reset: true,
+      });
+
+      sr.reveal(".sr-top", { origin: "top" });
+      sr.reveal(".sr-right", { origin: "right" });
+      sr.reveal(".sr-bottom", { origin: "bottom" });
+      sr.reveal(".sr-left", { origin: "left" });
+    </script>
+  </body>
+</html>
